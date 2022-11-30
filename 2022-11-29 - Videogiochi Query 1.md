@@ -175,7 +175,19 @@ FROM awards
 ```
 6. Selezionare categorie e classificazioni PEGI dei videogiochi che hanno ricevuto recensioni da 4 e 5 stelle, mostrandole una sola volta (3363)
 ```
-
+SELECT DISTINCT videogames.id, videogames.name, categories.name AS categories_name, pegi_labels.name AS pegi_lab
+FROM videogames
+	JOIN reviews
+		ON videogames.id = reviews.videogame_id
+	JOIN pegi_label_videogame
+        ON videogames.id = pegi_label_videogame.videogame_id
+	JOIN pegi_labels
+		ON pegi_label_videogame.pegi_label_id = pegi_labels.id
+	JOIN category_videogame
+		ON videogames.id = category_videogame.videogame_id
+	JOIN categories
+		ON category_videogame.category_id = categories.id
+WHERE reviews.rating >= 4
 ```
 7. Selezionare quali giochi erano presenti nei tornei nei quali hanno partecipato i giocatori il cui nome inizia per 'S' (474)
 ```
@@ -208,7 +220,23 @@ WHERE awards.name LIKE 'Gioco dell\'anno'
 ```
 9. Selezionare i giocatori che hanno giocato al gioco piÃ¹ atteso del 2018 in un torneo del 2019 (3306)
 ```
-
+SELECT tournaments.id, tournaments.name, tournaments.year, players.name, players.lastname, players.nickname
+FROM awards
+	JOIN award_videogame
+		ON awards.id = award_videogame.award_id
+	JOIN videogames
+		ON award_videogame.videogame_id = videogames.id
+	JOIN tournament_videogame
+		ON videogames.id = tournament_videogame.videogame_id
+	JOIN tournaments
+		ON tournament_videogame.tournament_id = tournaments.id
+	JOIN player_tournament
+		ON tournaments.id = player_tournament.tournament_id
+	JOIN players
+		ON player_tournament.player_id = players.id
+WHERE awards.name LIKE "Gioco più atteso"
+	AND award_videogame.year = 2018
+    AND tournaments.year = 2019
 ```
 
 ##### **BONUS**
